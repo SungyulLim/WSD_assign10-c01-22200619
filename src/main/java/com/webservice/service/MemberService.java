@@ -20,6 +20,8 @@ public class MemberService {
 
     public MemberResponse create(MemberRequest request) {
         Member saved = repository.save(new Member(request));
+        //Q7. 현재 Member에서 save()는 ID가 null이면 persist()를 호출해 INSERT로 새 데이터를 등록한다.
+        // ID가 있으면 merge()로 객체의 값을 영속성 컨텍스트의 관리 객체에 반영하고, 변경된 값이 있으면 flush 시 UPDATE로 DB를 수정한다.
         return MemberResponse.from(saved);
     }
 
