@@ -7,8 +7,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.EntityListeners;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import java.time.LocalDateTime;
+
 // Q1. Member를 JPA가 관리하는 Entity로 지정
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "members") // 실제 테이블의 이름을 명시, Q2. Member 클래스가 DB의 members 테이블과 연결되고, 객체 하나가 테이블의 행 하나에 연결됨.
 public class Member {
     @Id // Q1. id 필드가 엔티티를 구분하는 기본키로 설정
@@ -33,7 +40,13 @@ public class Member {
     @Column(nullable = false, length = 50)
     private String role;
 
-    protected Member() { } // JPA uses the no-args constructor.
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    protected Member() { }
 
     public Member(MemberRequest request) {
         this.name = request.name();

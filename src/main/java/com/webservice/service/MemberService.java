@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.ArrayList;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
@@ -35,10 +36,15 @@ public class MemberService {
         return MemberResponse.from(findEntity(id));
     }
 
+    // Q8. @Transactional은 여러 DB 작업을 하나의 트랜잭션으로 묶어 관리하는 어노테이션
+    // JPA는 관리 중인 엔티티의 변경을 감지하여 커밋 시 DB에 반영한다.
+    @Transactional
     public MemberResponse update(Long id, MemberRequest request) {
         Member member = findEntity(id);
         member.update(request);
-        return MemberResponse.from(repository.save(member));
+        MemberResponse response = MemberResponse.from(member);
+
+        return response;
     }
 
     public void delete(Long id) {
