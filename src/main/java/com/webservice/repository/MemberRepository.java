@@ -2,8 +2,20 @@ package com.webservice.repository;
 
 import com.webservice.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {}
+public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    // 단일 조건
+    List<Member> findByNameContainingIgnoreCase(String keyword);
+
+    // 복합 조건
+    List<Member> findByDepartmentAndGradeGreaterThan(
+            String department, Integer grade);
+
+    // 검색 및 정렬
+    List<Member> findByRoleOrderByGradeDesc(String role);
+}
 /*
 Q3. JpaRepository<Entity, Long>에서 두 타입은 각각 무엇을 의미하는가?
 => Entity는 Repository가 관리하는 엔티티 클래스이고, 두 번째 타입 Long은 그 엔티티의 기본키 타입이다

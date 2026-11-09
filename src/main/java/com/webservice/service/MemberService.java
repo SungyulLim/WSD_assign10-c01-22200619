@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class MemberService {
@@ -52,5 +52,48 @@ public class MemberService {
         return repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Member not found: " + id));
+    }
+
+    // 이름으로 검색
+    public List<MemberResponse> searchByName(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return findAll();
+        }
+
+        List<Member> members = repository.findByNameContainingIgnoreCase(keyword);
+        List<MemberResponse> result = new ArrayList<>();
+
+        for (Member member : members) {
+            MemberResponse response = MemberResponse.from(member);
+            result.add(response);
+        }
+
+        return result;
+    }
+
+    // 학과와 학년으로 검색
+    public List<MemberResponse> searchByDepartmentAndGrade(String department, Integer grade) {
+        List<Member> members = repository.findByDepartmentAndGradeGreaterThan(department, grade);
+        List<MemberResponse> result = new ArrayList<>();
+
+        for (Member member : members) {
+            MemberResponse response = MemberResponse.from(member);
+            result.add(response);
+        }
+
+        return result;
+    }
+
+    // 직책으로 검색하고 학년 내림차순으로 정렬
+    public List<MemberResponse> searchByRole(String role) {
+        List<Member> members = repository.findByRoleOrderByGradeDesc(role);
+        List<MemberResponse> result = new ArrayList<>();
+
+        for (Member member : members) {
+            MemberResponse response = MemberResponse.from(member);
+            result.add(response);
+        }
+
+        return result;
     }
 }

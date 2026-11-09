@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 import java.net.URI;
 import java.util.List;
 
@@ -29,8 +30,23 @@ public class MemberController {
         return ResponseEntity.created(URI.create("/api/members/" + created.id())).body(created);
     }
 
+    @GetMapping("/search/by-department-and-grade")
+    public List<MemberResponse> searchByDepartmentAndGrade(@RequestParam("department") String department, @RequestParam("grade") Integer grade) {
+        List<MemberResponse> result = service.searchByDepartmentAndGrade(department, grade);
+        return result;
+    }
+
+    @GetMapping("/search/by-role")
+    public List<MemberResponse> searchByRole(@RequestParam("role") String role) {
+        List<MemberResponse> result = service.searchByRole(role);
+        return result;
+    }
+
     @GetMapping
-    public List<MemberResponse> findAll() { return service.findAll(); }
+    public List<MemberResponse> findAll(@RequestParam(value = "keyword", required = false) String keyword) {
+        List<MemberResponse> result = service.searchByName(keyword);
+        return result;
+    }
 
     @GetMapping("/{id}")
     public MemberResponse findById(@PathVariable Long id) { return service.findById(id); }
